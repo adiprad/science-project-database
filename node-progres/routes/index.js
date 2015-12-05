@@ -15,18 +15,18 @@ function validateEmail(email) {
     return re.test(email);
 }
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-
 
 // POST - Create user
 router.post('/api/v1/user', function(req, res) {
 
     var results = [];
 
-	if (!req.body) return res.sendStatus(400);
+    if (!req.body) return res.sendStatus(400);
 
     // Grab data from http request
     // var data = {text: req.body.text};
@@ -51,21 +51,21 @@ router.post('/api/v1/user', function(req, res) {
           done();
           console.log('pg.connect() failed : ' + err);
           return res.status(500).json({ success: false, data: err });
-        }
+      }
 
-        client.query("INSERT INTO userinfo(user_data) VALUES(($1)) RETURNING id", [userData], function(err, result) {
-        	done();
-        	if (err) {
-        		console.log('query() failed : ' + err);
-        		return res.status(500).json({ success: false, data: err });
-        	}
+      client.query("INSERT INTO userinfo(user_data) VALUES(($1)) RETURNING id", [userData], function(err, result) {
+       done();
+       if (err) {
+          console.log('query() failed : ' + err);
+          return res.status(500).json({ success: false, data: err });
+      }
 
-        	console.log('GET result : ' + JSON.stringify(result.rows));
-        	done();
-        	return res.json(result.rows[0]);
-        });
+      console.log('GET result : ' + JSON.stringify(result.rows));
+      done();
+      return res.json(result.rows[0]);
+  });
 
-    });
+  });
 });
 
 // GET - Gets all the users or Gets one user if the ID is provided in the query string
@@ -84,36 +84,36 @@ router.get('/api/v1/user', function(req, res) {
           done();
           console.log('pg.connect() failed : ' + err);
           return res.status(500).json({ success: false, data: err });
-        }
+      }
 
         // SQL Query > Select Data
         if (id) {
         	console.log('Get the user with ID ' + id);
-			client.query("SELECT * FROM userinfo WHERE id = ($1);", [id], function(err, result) {
-	        	done();
-	        	if (err) {
-	        		console.log('query() failed : ' + err);
-	        		return res.status(500).json({ success: false, data: err });
-	        	}
+         client.query("SELECT * FROM userinfo WHERE id = ($1);", [id], function(err, result) {
+          done();
+          if (err) {
+             console.log('query() failed : ' + err);
+             return res.status(500).json({ success: false, data: err });
+         }
 
-	        	console.log('GET result : ' + JSON.stringify(result.rows));
-	        	return res.json(result.rows);
-	        });
+         console.log('GET result : ' + JSON.stringify(result.rows));
+         return res.json(result.rows);
+     });
 
-        } else {
-        	console.log('Gets all users');
-	        client.query("SELECT * FROM userinfo;", function(err, result) {
-	        	done();
-	        	if (err) {
-	        		console.log('query() failed : ' + err);
-	        		return res.status(500).json({ success: false, data: err });
-	        	}
+     } else {
+       console.log('Gets all users');
+       client.query("SELECT * FROM userinfo;", function(err, result) {
+          done();
+          if (err) {
+             console.log('query() failed : ' + err);
+             return res.status(500).json({ success: false, data: err });
+         }
 
-	        	console.log('GET result : ' + JSON.stringify(result.rows));
-	        	return res.json(result.rows);
-	        });
-	    }
-    });
+         console.log('GET result : ' + JSON.stringify(result.rows));
+         return res.json(result.rows);
+     });
+   }
+});
 });
 
 // GET - Gets the given user
@@ -132,7 +132,7 @@ router.get('/api/v1/user/:useremail', function(req, res) {
           done();
           console.log('pg.connect() failed : ' + err);
           return res.status(500).json({ success: false, data: err });
-        }
+      }
 
         // SQL Query > Select Data
         client.query("SELECT * FROM userinfo WHERE ((user_data->>'email') = $1);", [email], function(err, result) {
@@ -174,19 +174,19 @@ router.delete('/api/v1/user/:useremail', function(req, res) {
           done();
           console.log('pg.connect() failed : ' + err);
           return res.status(500).json({ success: false, data: err });
-        }
+      }
 
         // SQL Query > Delete Data
         client.query("DELETE FROM userinfo WHERE ((user_data->>'email') = $1);", [email], function(err, result) {
-			done();
-        	if (err) {
-        		console.log('query() failed : ' + err);
-        		return res.status(500).json({ success: false, data: err });
-        	}
+         done();
+         if (err) {
+          console.log('query() failed : ' + err);
+          return res.status(500).json({ success: false, data: err });
+      }
 
-        	console.log("DELETE result : " + JSON.stringify(result.rows));
-        	return res.json({});
-        })
+      console.log("DELETE result : " + JSON.stringify(result.rows));
+      return res.json({});
+  })
     });
 
 });

@@ -10,22 +10,6 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: postgres; Type: COMMENT; Schema: -; Owner: postgres
---
-
-COMMENT ON DATABASE postgres IS 'default administrative connection database';
-
-
---
--- Name: test; Type: SCHEMA; Schema: -; Owner: postgres
---
-
-CREATE SCHEMA test;
-
-
-ALTER SCHEMA test OWNER TO postgres;
-
---
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
@@ -46,15 +30,67 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: user_data; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+-- Name: userinfo; Type: TABLE; Schema: public; Owner: pradosh; Tablespace: 
 --
 
-CREATE TABLE user_data (
-    data jsonb
+CREATE TABLE userinfo (
+    id integer NOT NULL,
+    user_data jsonb NOT NULL
 );
 
 
-ALTER TABLE user_data OWNER TO postgres;
+ALTER TABLE userinfo OWNER TO pradosh;
+
+--
+-- Name: userinfo_id_seq; Type: SEQUENCE; Schema: public; Owner: pradosh
+--
+
+CREATE SEQUENCE userinfo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE userinfo_id_seq OWNER TO pradosh;
+
+--
+-- Name: userinfo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pradosh
+--
+
+ALTER SEQUENCE userinfo_id_seq OWNED BY userinfo.id;
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: pradosh
+--
+
+ALTER TABLE ONLY userinfo ALTER COLUMN id SET DEFAULT nextval('userinfo_id_seq'::regclass);
+
+
+--
+-- Data for Name: userinfo; Type: TABLE DATA; Schema: public; Owner: pradosh
+--
+
+COPY userinfo (id, user_data) FROM stdin;
+\.
+
+
+--
+-- Name: userinfo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pradosh
+--
+
+SELECT pg_catalog.setval('userinfo_id_seq', 1, false);
+
+
+--
+-- Name: userinfo_pkey; Type: CONSTRAINT; Schema: public; Owner: pradosh; Tablespace: 
+--
+
+ALTER TABLE ONLY userinfo
+    ADD CONSTRAINT userinfo_pkey PRIMARY KEY (id);
+
 
 --
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
@@ -64,17 +100,6 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
-GRANT USAGE ON SCHEMA public TO report_db;
-
-
---
--- Name: user_data; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE user_data FROM PUBLIC;
-REVOKE ALL ON TABLE user_data FROM postgres;
-GRANT ALL ON TABLE user_data TO postgres;
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE user_data TO report_db;
 
 
 --

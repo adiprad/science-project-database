@@ -3,10 +3,12 @@ var router = express.Router();
 var pg = require('pg');
 var bodyParser = require('body-parser')
 
-// var connectionString = process.env.DATABASE_URL || 'pg://pradosh:myTest@localhost:5432/reportdb';
-
 var connectionString = process.env.DATABASE_URL;
-console.log('ConnectionStr: ' + connectionString);
+
+if (connectionString == undefined) {
+	console.log("ConnectionStr not provided")
+	return 0;
+}
 
 function validateEmail(email) {
     var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;

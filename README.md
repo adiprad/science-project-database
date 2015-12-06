@@ -37,22 +37,53 @@ ALTER TABLE userinfo ADD CONSTRAINT adult_age CHECK ((user_data->>'age') >= '18'
 
 
 # REST APIs
-
 Here are the REST APIs supported by the Node-PostgreS application
 
 ## USER APIs
+
+### Create user
 POST /api/v1/user
-   	- Creates user
+Content-Type: application/json
+```
+{
+	"user_data":
+	{
+	    "age": 30,
+	    "name": "Dhruv",
+	    "email": "dhruv@xyz.com"
+	}
+}
+```
 
+### Deletes user
 DELETE /api/v1/user/{email}
-	- Deletes user
 
+### Gets all the existing user info
 GET /api/v1/user
-	- Gets all the existing user info
 
+### Gets the user info
 GET /api/v1/user/{email}
-	- Gets the user info
+
 
 ## Questions Reports APIs
-POST /api/v1/question/info
-	- Posts a question
+
+### Upload the question info
+POST /api/v1/user/{userId}/question/{questionType}
+Content-Type: application/json
+
+```
+{
+     "score_percent" : 0.99,
+     "distraction_id" : 1,
+     "time_taken" : 100
+}
+```
+
+### Get all the question types for a particular user
+GET /api/v1/user/{userId}/question
+
+### Get the question type for a particular user
+GET /api/v1/user/{userId}/question/{questionType}
+
+
+

@@ -26,21 +26,42 @@ exports.postQuestion = function(req, res) {
           done();
           console.log('pg.connect() failed : ' + err);
           return res.status(500).json({ success: false, data: err });
-      }
+        }
 
-      client.query("INSERT INTO questioninfo(question_type, user_id, score_percent, time_taken, distraction_id) VALUES($1, $2, $3, $4, $5) RETURNING id", [question_type, user_id, req.body.score_percent, req.body.time_taken, req.body.distraction_id], function(err, result) {
-       done();
-       if (err) {
-          console.log('query() failed : ' + err);
-          return res.status(500).json({ success: false, data: err });
-      }
+        // Check if the user already has the question type
+        client.query("SELECT * FROM questioninfo WHERE (user_id = $1 AND question_type = $2);", [user_id, question_type], 
+            function(err, result) {
+            
+            if (err) {
+                done();
+                console.log('query() failed : ' + err);
+                return res.status(500).json({ success: false, data: err });
+            }
 
-      console.log('GET result : ' + JSON.stringify(result.rows));
-      done();
-      return res.json(result.rows[0]);
-  });
+            console.log('GET result : ' + JSON.stringify(result.rows));
+            if (result.rows.length != 0) {
+                done();
+                err_msg = 'Duplicate question type ' + question_type + ' for user ' + user_id;
+                console.log(err_msg);
+                return res.status(400).json({ success: false, data: err_msg });
+            }
 
-  });
+            client.query("INSERT INTO questioninfo(question_type, user_id, score_percent, time_taken, distraction_id) VALUES($1, $2, $3, $4, $5) RETURNING id", [question_type, user_id, req.body.score_percent, req.body.time_taken, req.body.distraction_id], function(err, result) {
+                
+                if (err) {
+                    done();
+                    console.log('query() failed : ' + err);
+                    return res.status(500).json({ success: false, data: err });
+                }
+
+                console.log('GET result : ' + JSON.stringify(result.rows));
+                done();
+                return res.json(result.rows[0]);
+            });
+
+        });
+
+    });
 };
 
 

@@ -30,6 +30,48 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: questioninfo; Type: TABLE; Schema: public; Owner: pradosh; Tablespace: 
+--
+
+CREATE TABLE questioninfo (
+    id integer NOT NULL,
+    question_type integer NOT NULL,
+    user_id integer,
+    score_percent real NOT NULL,
+    time_taken integer NOT NULL,
+    distraction_id integer NOT NULL,
+    CONSTRAINT distraction_id_numeric CHECK ((distraction_id >= 0)),
+    CONSTRAINT question_type_numeric CHECK ((question_type > 0)),
+    CONSTRAINT score_percent_check CHECK (((score_percent >= (0)::double precision) AND (score_percent <= (1)::double precision))),
+    CONSTRAINT time_taken_numeric CHECK ((time_taken > 0)),
+    CONSTRAINT user_id_numeric CHECK ((user_id > 0))
+);
+
+
+ALTER TABLE questioninfo OWNER TO pradosh;
+
+--
+-- Name: questioninfo_id_seq; Type: SEQUENCE; Schema: public; Owner: pradosh
+--
+
+CREATE SEQUENCE questioninfo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE questioninfo_id_seq OWNER TO pradosh;
+
+--
+-- Name: questioninfo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pradosh
+--
+
+ALTER SEQUENCE questioninfo_id_seq OWNED BY questioninfo.id;
+
+
+--
 -- Name: userinfo; Type: TABLE; Schema: public; Owner: pradosh; Tablespace: 
 --
 
@@ -69,7 +111,29 @@ ALTER SEQUENCE userinfo_id_seq OWNED BY userinfo.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: pradosh
 --
 
+ALTER TABLE ONLY questioninfo ALTER COLUMN id SET DEFAULT nextval('questioninfo_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: pradosh
+--
+
 ALTER TABLE ONLY userinfo ALTER COLUMN id SET DEFAULT nextval('userinfo_id_seq'::regclass);
+
+
+--
+-- Data for Name: questioninfo; Type: TABLE DATA; Schema: public; Owner: pradosh
+--
+
+COPY questioninfo (id, question_type, user_id, score_percent, time_taken, distraction_id) FROM stdin;
+\.
+
+
+--
+-- Name: questioninfo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pradosh
+--
+
+SELECT pg_catalog.setval('questioninfo_id_seq', 13, true);
 
 
 --
@@ -77,9 +141,7 @@ ALTER TABLE ONLY userinfo ALTER COLUMN id SET DEFAULT nextval('userinfo_id_seq':
 --
 
 COPY userinfo (id, user_data) FROM stdin;
-35	{"age": 40, "name": "Pradosh", "email": "pradosh@xyz.com"}
-36	{"age": 30, "name": "Dhruv", "email": "dhruv@xyz.com"}
-38	{"age": 30, "name": "Dhruv", "email": "dhruv1@xyz.com"}
+41	{"age": 30, "name": "Dhruv", "email": "dhruv@xyz.com"}
 \.
 
 
@@ -87,7 +149,15 @@ COPY userinfo (id, user_data) FROM stdin;
 -- Name: userinfo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pradosh
 --
 
-SELECT pg_catalog.setval('userinfo_id_seq', 40, true);
+SELECT pg_catalog.setval('userinfo_id_seq', 41, true);
+
+
+--
+-- Name: questioninfo_pkey; Type: CONSTRAINT; Schema: public; Owner: pradosh; Tablespace: 
+--
+
+ALTER TABLE ONLY questioninfo
+    ADD CONSTRAINT questioninfo_pkey PRIMARY KEY (id);
 
 
 --
@@ -103,6 +173,14 @@ ALTER TABLE ONLY userinfo
 --
 
 CREATE UNIQUE INDEX userinfo_email ON userinfo USING btree (((user_data ->> 'email'::text)));
+
+
+--
+-- Name: questioninfo_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pradosh
+--
+
+ALTER TABLE ONLY questioninfo
+    ADD CONSTRAINT questioninfo_user_id_fkey FOREIGN KEY (user_id) REFERENCES userinfo(id);
 
 
 --

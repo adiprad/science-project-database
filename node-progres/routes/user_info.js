@@ -9,6 +9,7 @@ function validateEmail(email) {
 exports.postUserInfo = function(req, res) {
 
     var results = [];
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     if (!req.body) return res.sendStatus(400);
 
@@ -59,6 +60,8 @@ exports.getAllUsers = function(req, res) {
     // Check if query string 'id' parameter is supplied
     var id  = req.query.id;
     console.log("ID : " + id);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
@@ -104,6 +107,8 @@ exports.getUser = function(req, res) {
 
     var results = [];
     var email = req.params.useremail;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
     if (!validateEmail(email)) {
         return res.status(400).json({ success: false, data: "Invalid email address + " + email});
     }
@@ -143,6 +148,8 @@ exports.getUser = function(req, res) {
 exports.deleteUser = function(req, res) {
 
     var results = [];
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
 
     // Grab data from the URL parameters
     var email = req.params.useremail;

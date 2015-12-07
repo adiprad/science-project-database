@@ -5,6 +5,7 @@ var connectionString = process.env.DATABASE_URL;
 exports.postQuestion = function(req, res) {
 
     var results = [];
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     if (!req.body) return res.sendStatus(400);
     var user_id = req.params.user_id;
@@ -70,6 +71,7 @@ exports.getQuestion = function(req, res) {
     var results = [];
     var user_id = req.params.user_id;
     var question_type = req.params.question_type;
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     console.log('GET question '+ question_type +' for user ' + user_id);
 
@@ -108,6 +110,7 @@ exports.getAllQuestions = function(req, res) {
 
     var results = [];
     var user_id = req.params.user_id;
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Get a Postgres client from the connection pool
     pg.connect(connectionString, function(err, client, done) {
